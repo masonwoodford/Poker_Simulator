@@ -11,51 +11,145 @@ class Card:
 
 class Hand:
     def __init__(self, first, second, third, fourth, fifth):
-        self.cards = [first, second, third, fourth, fifth]
-        self.values = [first.value, second.value, third.value, fourth.value, fifth.value]
-        self.suit = [first.suit, second.suit, third.suit, fourth.suit, fifth.suit]
+        self.first = first
+        self.second = second
+        self.third = third
+        self.fourth = fourth
+        self.fifth = fifth
+        self.values = [int(first.value), int(second.value), int(third.value), int(fourth.value), int(fifth.value)]
+        self.values = sorted(self.values, reverse=True)
+        self.suits = [first.suit, second.suit, third.suit, fourth.suit, fifth.suit]
+        self.sameSuits = [self.suits.count(suit) for suit in self.suits]
+        self.sameNums = [self.values.count(value) for value in self.values]
+        self.isStraight = (self.values[0] - self.values[4] == 4)
+        self.isFlush = (self.sameSuits[0] == 5)
+        self.handType = None
+        #self.score = -1
 
     def checkPair(self):
-        pair = []
-        others = []
-        for i in self.values:
-            if self.values.count(i) == 2:
-                pair.append(i)
-            elif self.values.count(i) == 1:
-                others.append(i)
-                others.sort()
-        score = 15 
-        return score
+        if (self.sameNums.count(2) != 2):
+            return False
+        #pair = -1
+        #others = []
+        #for i in self.values:
+        #    if self.values.count(i) == 2:
+        #        pair = 1
+        #    else:
+        #        others.append(i)
+        #        others.sort()
+        return True
 
     def checkTwoPair(self):
-        pairs = []
-        others = []
-        for i in self.values:
-            if self.values.count(i) == 2:
-                pairs.append(i)
-            elif self.values.count(i) == 1:
-                others.append(i)
-                others.sort()
-        score = 30
+        if (self.sameNums.count(2) != 4):
+            return False
+        #pairs = []
+        #others = []
+        #for i in self.values:
+        #    if self.values.count(i) == 2:
+        #        pairs.append(i)
+        #        pairs.sort()
+        #    else:
+        #        others.append(i)
+        return True
 
-    def scoreHand(self):
-        pass
+    def checkThreeOfKind(self):
+        if (self.sameNums.count(3) != 3):
+            return False
+        #three = -1
+        #others = []
+        #for i in self.values:
+        #    if self.values.count(i) == 3:
+        #        three = i
+        #    else:
+        #        others.append(i)
+        #        others.sort()
+        return True
+
+    def checkStraight(self):
+        return self.isStraight
+
+    def checkFlush(self):
+        return self.isFlush
+
+    def checkFullHouse(self):
+        if (self.sameNums.count(3) != 3 or self.sameNums.count(2) != 2):
+            return False
+        #three = -1
+        #two = -1
+        #for i in self.values:
+        #    if self.values.count(i) == 3:
+        #        three = i
+        #    elif self.values.count(i) == 2:
+        #        two = i
+        return True
+
+    def checkFourOfKind(self):
+        if (self.sameNums.count(4) != 4):
+            return False
+        #four = -1
+        #other = -1
+        #for i in self.values:
+            #if self.values.count(i) == 4:
+            #    four = i
+            #elif self.values.count(i) == 1:
+            #    other = i
+        return True
+
+    def checkStraightFlush(self):
+        if (self.isStraight == False or self.isFlush == False):
+            return False
+        return True
+
+    def checkRoyalFlush(self):
+        if (self.isFlush == False or self.values != [14, 13, 12, 11, 10]):
+            return False
+        return True
+
+    def decideHand(self):
+        if self.checkRoyalFlush():
+            self.handType = "Royal Flush"
+            return
+        if self.checkStraightFlush():
+            self.handType = "Straight Flush"
+            return
+        if self.checkFourOfKind():
+            self.handType = "Four of a Kind"
+            return
+        if self.checkFullHouse():
+            self.handType = "Full House"
+            return
+        if self.checkFlush():
+            self.handType = "Flush"
+            return
+        if self.checkStraight():
+            self.handType = "Straight"
+            return
+        if self.checkThreeOfKind():
+            self.handType = "Three of a kind"
+            return
+        if self.checkTwoPair():
+            self.handType = "Two pair"
+            return
+        if self.checkPair():
+            self.handType = "Pair"
+            return
+        self.handType = "High card"
+        return
 
     def __str__(self):
-        return (f'{self.first}, {self.second}, {self.third}, {self.fourth}, {self.fifth}')
+        self.decideHand()
+        return (f'{self.first}, {self.second}, {self.third}, {self.fourth}, {self.fifth}: {self.handType}')
 
 class Deck:
     def __init__(self):
         self.deck = []
         self.createDeck()
         self.handsArr = []
-        self.generateCombinations()
-        self.convertToHands()
 
     def createDeck(self):
         suits = ["spades", "clubes", "diamonds", "hearts"]
         numbers = []
-        deck = []
+        self.deck = []
         for i in range(2, 15):
             numbers.append(str(i))
         for suit in suits:
@@ -83,5 +177,7 @@ class Deck:
     #def shuffle(self):
 
 deck = Deck()
-deck.printDeck()
+deck.generateCombinations()
+deck.convertToHands()
+deck.printHands()
 
