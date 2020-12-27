@@ -174,7 +174,7 @@ class Deck:
         self.isSorted = False
 
     def createDeck(self):
-        suits = ["spades", "clubes", "diamonds", "hearts"]
+        suits = ["spades", "clubs", "diamonds", "hearts"]
         numbers = []
         self.deck = []
         for i in range(2, 15):
@@ -207,7 +207,7 @@ class Deck:
                 self.straights.append(temp)
             elif temp.handType == "Three of a kind":
                 self.threeOfAKinds.append(temp)
-            elif temp.handType == "Two Pair":
+            elif temp.handType == "Two pair":
                 self.twoPairs.append(temp)
             elif temp.handType == "Pair":
                 self.pairs.append(temp)
@@ -320,5 +320,14 @@ class Deck:
 
 deck = Deck()
 deck.generateCombinations()
+deck.printHighCards()
+deck.printPairs()
 deck.printTwoPairs()
+deck.printThreeOfAKinds()
+deck.printStraights()
+deck.printFlushes()
+deck.printFullHouses()
+deck.printFourOfAKinds()
+deck.printStraightFlushes()
+deck.printRoyalFlushes()
 
